@@ -1,3 +1,4 @@
+from re import A
 from fastapi import APIRouter, Query, Request, UploadFile
 
 from fastapi.encoders import jsonable_encoder
@@ -58,6 +59,20 @@ def modelLocation_get(modelName) -> Path:
     modelDir = settings.modelMeta.location / Path(modelName)
     fileLocation: Path = modelDir / "model.pth"
     return fileLocation
+
+
+def inferenceDevice_get() -> str:
+    if not settings.modelMeta.deviceState_read():
+        settings.modelMeta.state_save()
+    return settings.modelMeta.device
+
+
+def inferenceDevice_set(device: str) -> iresponse.InferenceDevice:
+    settings.modelMeta.device = device
+    settings.modelMeta.state_save()
+    iDevice: iresponse.InferenceDevice = iresponse.InferenceDevice()
+    iDevice.device = device
+    return iDevice
 
 
 async def model_save(
