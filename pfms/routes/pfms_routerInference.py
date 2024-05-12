@@ -30,15 +30,15 @@ def device_list() -> iresponse.InferenceDevice:
     Description
     -----------
 
-    GET the current list of models in the pfms server.
+    GET the current device assigned to the pfms server.
 
     Returns
     -------
-    * `iresponse.InferenceDevice`: The response containing the list of models
+    * `iresponse.InferenceDevice`: The response containing the inference device
     """
     # pudb.set_trace()
     iDevice: iresponse.InferenceDevice = iresponse.InferenceDevice()
-    iDevice.device = settings.modelMeta.device
+    iDevice.device = pfmsController_inference.inferenceDevice_get()
     return iDevice
 
 
@@ -62,9 +62,8 @@ def device_put(
     -------
     * `iresponse.InferenceDevice`: The response containing the inference device
     """
-    iDevice.device = device
-    settings.modelMeta.device = device
-    return iDevice
+    # pudb.set_trace()
+    return pfmsController_inference.inferenceDevice_set(device)
 
 
 @router.get(
