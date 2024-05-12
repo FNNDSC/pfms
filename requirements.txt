@@ -13,7 +13,7 @@ pfmisc
 # Misc
 pydantic>=2.3.0
 pydantic_settings
-appdirs
+platformdirs
 psutil
 pftag
 
