@@ -10,6 +10,7 @@ import psutil
 import multiprocessing
 import os
 import socket
+import pudb
 
 
 class ValueStr(BaseModel):
@@ -20,13 +21,13 @@ def helloRouter_create(
     name: str, about: str, version: str, tags: List[str] = None
 ) -> APIRouter:
     """
-    Example on how to create some predefined routes (hello and about)
+    Example on how to create some predefined routes (hello and sysinfo)
     which produces data that can be set per-instance and is constant
     within an instance.
 
     The traditional (and more legible) paradigm is to create one router
     at the module level which is imported by the client app, as
-    demonstrated in ../routes/dicom.py
+    demonstrated in main.py
 
     This code here demonstrates how to create a router factory/constructor
     function which creates router instances, escaping the singleton pattern.
@@ -81,10 +82,20 @@ def helloRouter_create(
         version: str = Field(..., title="Platform version")
 
         # NB: Not working?
-        memory: List = Field(
+        # memory: List = Field(
+        #     ...,
+        #     title="Details about virtual memory",
+        #     description="Actually a NamedTuple but I'm not typing it out",
+        # )
+        availablememory: int = Field(
+            psutil.virtual_memory().available,
+            title="Available Memory",
+            description="Total amount of memory in system",
+        )
+        freememory: int = Field(
             ...,
-            title="Details about virtual memory",
-            description="Actually a NamedTuple but I'm not typing it out",
+            title="Free Memory",
+            description="Amount of free memory currently available",
         )
 
         cpucount: int = Field(multiprocessing.cpu_count(), title="Number of CPU cores")
@@ -122,7 +133,8 @@ def helloRouter_create(
         version: str = about_model.version
         sysinfo: SysInfoModel = SysInfoModel(
             uname=["Linux"],
-            memory=[],
+            availablememory=0,
+            freememory=0,
             cpu_percent=0.0,
             loadavg=(0.0, 0.0, 0.0),
             version="",
@@ -141,22 +153,24 @@ def helloRouter_create(
         """
         return about_model
 
-    @router.get("/hello/", tags=tags, response_model=HelloModel)
+    @router.get("/sysinfo/", tags=tags, response_model=HelloModel)
     async def read_hello(
         echoBack: Optional[str] = Query(
             None, description="something to print back verbatim"
         ),
     ):
         """
-        Produce some information like the OG pfcon
+        show some sysinfo on the env in which this service is running
         """
+        # pudb.set_trace()
         d_ret = {"sysinfo": {}}
         d_ret["sysinfo"]["system"] = platform.system()
         d_ret["sysinfo"]["machine"] = platform.machine()
         d_ret["sysinfo"]["uname"] = platform.uname()
         d_ret["sysinfo"]["platform"] = platform.platform()
         d_ret["sysinfo"]["version"] = platform.version()
-        d_ret["sysinfo"]["memory"] = psutil.virtual_memory()
+        d_ret["sysinfo"]["availablememory"] = psutil.virtual_memory().available
+        d_ret["sysinfo"]["freememory"] = psutil.virtual_memory().free
         d_ret["sysinfo"]["cpucount"] = multiprocessing.cpu_count()
         d_ret["sysinfo"]["loadavg"] = os.getloadavg()
         d_ret["sysinfo"]["cpu_percent"] = psutil.cpu_percent()
@@ -166,8 +180,10 @@ def helloRouter_create(
 
         if echoBack:
             echo = EchoModel(msg=echoBack)
-            return HelloModel(echoBack=echo, sysinfo=sysinfo)
+        else:
+            echo = EchoModel(msg="")
+        return HelloModel(echoBack=echo, sysinfo=sysinfo)
 
-        return HelloModel(sysinfo=sysinfo)
+        # return HelloModel(sysinfo=sysinfo)
 
     return router
