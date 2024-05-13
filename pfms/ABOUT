@@ -1,3 +1,3 @@
-`pfbridge` is a simple fastAPI relay hop. Clients POST a "simplified" JSON payload, and `pfbridge` will add some additional fields to the payload before relaying it to its destination. The return from the remote server is returned to the original caller with some simplifications.
+`pfms` is a simple fastAPI "model server" providing inference services based on `pl-monai_spleenseg`. Clients POST a NIfTI volume file of the lower abdomen, and `pfms` executes the "spleenseg" (spleen segmentation) inference code, ultimately returning a segmented NIfTI volume as response.
 
-API documentation is available at :3333/docs
+API documentation is available at :2024/docs
