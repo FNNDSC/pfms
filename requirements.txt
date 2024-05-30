@@ -17,5 +17,3 @@ platformdirs
 psutil
 pftag
 
-spleenseg
-

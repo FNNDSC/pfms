@@ -1,28 +1,28 @@
 version: '3.9'
 
 services:
-  pfms:
+  pfchrs:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         UID: ${UID}
         http_proxy: ${HTTP_PROXY}
-    image: local/pfms
-    container_name: pfms
+    image: local/pfchrs
+    container_name: pfchrs
     volumes:
-      - ./pfms:/app
+      - ./pfchrs:/app
     command: /start-reload.sh
     environment:
       MAX_WORKERS: 1
       SESSION_USERNAME: localuser
     ports:
-      - "2024:2024"
+      - "2025:2025"
     networks:
       local:
     deploy:
       resources:
-        shm_size: 512M
+        # shm_size: 512M
         reservations:
           devices:
             - driver: nvidia

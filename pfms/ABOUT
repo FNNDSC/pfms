@@ -1,3 +1,0 @@
-`pfms` is a simple fastAPI "model server" providing inference services based on `pl-monai_spleenseg`. Clients POST a NIfTI volume file of the lower abdomen, and `pfms` executes the "spleenseg" (spleen segmentation) inference code, ultimately returning a segmented NIfTI volume as response.
-
-API documentation is available at :2024/docs
