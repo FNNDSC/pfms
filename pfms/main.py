@@ -2,7 +2,7 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from base.router import helloRouter_create
 
-from routes.pfchrs_router import router as pfchrs_router
+from routes.pfms_routerInference import router as pfms_routerInference
 from routes.credentialRouter import router as credential_router
 from os import path
 from config import settings
@@ -16,9 +16,11 @@ with open(path.join(path.dirname(path.abspath(__file__)), "VERSION")) as f:
 
 tags_metadata: list = [
     {
-        "name": "pfchrs endpoints",
+        "name": "pfms endpoints",
         "description": """
-            Endpoints for interacting with chrs.
+            Endpoints for uploading models and performing inference on a variety
+            of inputs. The most common upload type is a NIfTI volume, with the
+            return volume also being NIfTI.
             """,
     },
     {
@@ -29,7 +31,7 @@ tags_metadata: list = [
             """,
     },
     {
-        "name": "pfchrs environmental detail",
+        "name": "pfms environmental detail",
         "description": """
             Provide API GET endpoints that provide information about the
             service itself and the compute environment in which the service
@@ -42,7 +44,7 @@ tags_metadata: list = [
 # and if so, check/lock the vault.
 settings.vaultCheckLock(settings.vault)
 
-app = FastAPI(title="pfchrs", version=str_version, openapi_tags=tags_metadata)
+app = FastAPI(title="pfms", version=str_version, openapi_tags=tags_metadata)
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,10 +55,10 @@ app.add_middleware(
 )
 
 hello_router: APIRouter = helloRouter_create(
-    name="pfchrs_hello", version=str_version, about=str_about
+    name="pfms_hello", version=str_version, about=str_about
 )
 
-app.include_router(pfchrs_router, prefix="/api/v1")
+app.include_router(pfms_routerInference, prefix="/api/v1")
 
 app.include_router(credential_router, prefix="/api/v1")
 

@@ -44,7 +44,7 @@ def helloRouter_create(
     # so that its constant response can be generated in the interactive docs
 
     if tags is None:
-        tags = ["pfchrs environmental detail"]
+        tags = ["pfms environmental detail"]
 
     about_name = name
     about_about = about

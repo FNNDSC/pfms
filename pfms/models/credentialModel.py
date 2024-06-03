@@ -4,18 +4,10 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 import pudb
+from config import settings
 
 
-class StatusWithMessage(BaseModel):
-    status: bool = True
-    message: str = ""
-
-
-class VaultStatus(StatusWithMessage):
-    locked: bool = False
-
-
-class VaultKey(BaseModel):
+class vaultKey(BaseModel):
     """
     Simply a "key" and a "value"
     """
@@ -23,11 +15,17 @@ class VaultKey(BaseModel):
     vaultKey: str = ""
 
 
-class CredentialsStatus(StatusWithMessage):
-    pass
+class vaultStatus(BaseModel):
+    locked: bool = False
+    description: str = "unlocked"
 
 
-class Credentials(BaseModel):
+class credentialsStatus(BaseModel):
+    status: bool = False
+    message: str = ""
+
+
+class credentials(BaseModel):
     """
     A simple class to hold sensitive data, including the
     usernames and passwords for various backend services.
@@ -43,12 +41,3 @@ class Credentials(BaseModel):
 
     username: str = ""
     password: str = ""
-    cubeURL: str = ""
-
-
-class CredentialsAdd(StatusWithMessage):
-    pass
-
-
-class Passwd(BaseModel):
-    entry: dict[str, Credentials] = {}
